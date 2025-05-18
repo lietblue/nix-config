@@ -40,6 +40,7 @@
             ./server/liet-tablet-ap5
             ./desktop-env/kde-plasma
             ./desktop-env/hyperland
+            ./desktop-env/gnome
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             flake-programs-sqlite.nixosModules.programs-sqlite
