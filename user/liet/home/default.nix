@@ -54,6 +54,7 @@
     vscodium
     localsend
     telegram-desktop
+    libreoffice-qt6
   ];
 
   home.username = "liet";
