@@ -35,7 +35,7 @@
     {
       nixosConfigurations = {
         liet-tablet-ap5 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
+          system = "x86_64-linux";     
           modules = with inputs; [
             ./server/liet-tablet-ap5
             ./desktop-env/kde-plasma
@@ -44,6 +44,13 @@
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             flake-programs-sqlite.nixosModules.programs-sqlite
+            # {
+            #   system.configurationRevision = if (builtins.pathExists ./.git) then
+            #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
+            #   else
+            #     null;
+            # }
+            { system.configurationRevision = self.rev or "dirty"; }
           ];
           specialArgs = {
             inherit inputs;
