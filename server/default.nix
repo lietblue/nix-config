@@ -45,6 +45,7 @@
 
     pciutils # lspci
     usbutils # lsusb
+    smartmontools # smartctl
 
     nmap
 
