@@ -4,6 +4,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     honkai-railway-grub-theme.url = "github:voidlhf/StarRailGrubThemes";
     impermanence.url = "github:nix-community/impermanence";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,11 +33,33 @@
       url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    colmena.url = "github:zhaofengli/colmena";
   };
   outputs =
-    { nixpkgs, ... }@inputs:
+    { self, colmena, nixpkgs, ... }@inputs:
     {
       nixosConfigurations = {
+        o2-cn-east-1 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./host/o2-cn-east-1
+            ./platform/aliyun-swas
+            ./platform/aliyun-swas/disk
+            disko.nixosModules.disko
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            # {
+            #   system.configurationRevision = if (builtins.pathExists ./.git) then
+            #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
+            #   else
+            #     null;
+            # }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
         liet-tablet-ap5 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";     
           modules = with inputs; [
@@ -56,10 +82,66 @@
             inherit inputs;
           };
         };
+        bootstrap-iso = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./platform/iso
+          ];
+        };
+        bootstrap = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./host/o2-cn-east-1
+            ./platform/aliyun-swas
+            ./platform/aliyun-swas/disk
+            disko.nixosModules.disko
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            # {
+            #   system.configurationRevision = if (builtins.pathExists ./.git) then
+            #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
+            #   else
+            #     null;
+            # }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
+      };
+      colmenaHive = colmena.lib.makeHive {
+        meta = {
+          nixpkgs = import nixpkgs {
+            system = "x86_64-linux";
+            overlays = [];
+          };
+        };
+        o2-cn-east-1 = {
+          imports = with inputs; [
+            ./user/root
+            ./host/o2-cn-east-1
+            ./platform/aliyun-swas
+            ./platform/aliyun-swas/disk
+            disko.nixosModules.disko
+            # flake-programs-sqlite.nixosModules.programs-sqlite
+            # {
+            #   system.configurationRevision = if (builtins.pathExists ./.git) then
+            #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
+            #   else
+            #     null;
+            # }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
       };
       packages.x86_64-linux = {
-        #topLevelImage = self.nixosConfigurations.bootstrap.config.system.build.toplevel;
-        #diskoScript = self.nixosConfigurations.bootstrap.config.system.build.diskoScript;
+        bootstrapIso = self.nixosConfigurations.bootstrap-iso.config.system.build.isoImage;
+        topLevelImage = self.nixosConfigurations.o2-cn-east-1.config.system.build.toplevel;
+        diskoScript = self.nixosConfigurations.o2-cn-east-1.config.system.build.diskoScript;
       };
     };
 }

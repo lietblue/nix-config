@@ -1,15 +1,11 @@
 {
-  inputs,
   config,
   lib,
   pkgs,
   modulesPath,
   ...
-}:
-{
-  imports = [
-    ../hardware/wireless/bluetooth
-  ];
+}:{
+  
   nix.settings.substituters = [
     "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
     "https://cache.nixos.org"
@@ -23,19 +19,37 @@
     "flakes"
   ];
 
-  users.mutableUsers = false;
+  networking.firewall.allowedTCPPorts = [ 
+    30001 #rathole control
+    30002 #rathole liet inbound
+  ];
+
+  networking.firewall.allowedUDPPorts = [ 
+    30000 #zerotier moon
+    30001 #rathole control
+    30002 #rathole liet inbound
+  ];
+
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+
+  virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
   security.sudo.wheelNeedsPassword = false;
-
-  programs.fish.enable = true;
-  users.defaultUserShell = pkgs.fish;
-
-  networking.networkmanager.enable = true;
-  networking.wireless.iwd.enable = true;
-  networking.networkmanager.wifi.backend = "iwd";
-
-  services.displayManager.ly.enable = true;
-
+  users.mutableUsers = false;
+  time.timeZone = "Asia/Shanghai";
   environment.systemPackages = with pkgs; [
+    dive # look into docker image layers
+    podman-tui # status of containers in the terminal
+    podman-compose # start group of containers for dev
+
+
     # base system
     git
     nano
@@ -57,7 +71,7 @@
     fastfetch # 防爆柜
 
     nix-output-monitor # 米奇妙妙 nix 输出查看器
-    efibootmgr
+    efibootmgr # manage efi
   ];
 
   i18n.supportedLocales = [
@@ -68,17 +82,16 @@
   i18n.defaultLocale = "en_US.UTF-8";
 
   environment.variables.EDITOR = "nano";
-
+  networking.hostName = "o2-cn-east-1";
   boot.tmp.cleanOnBoot = true;
 
   services.openssh = {
     enable = true;
     settings = {
       #PermitRootLogin = "yes";
-      #PasswordAuthentication = true;
+      PasswordAuthentication = false;
     };
     openFirewall = true;
   };
-
-  time.timeZone = "Asia/Shanghai";
+  system.stateVersion = "25.05";
 }
