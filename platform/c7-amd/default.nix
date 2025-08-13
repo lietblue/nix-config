@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath,inputs, ... }:
 
 {
   imports =
@@ -24,8 +24,8 @@
   boot.loader.grub = rec {
     device = "nodev";
     efiSupport = true;
-    # theme = inputs.honkai-railway-grub-theme.packages.x86_64-linux.march7th-thehunt_cn-grub-theme;
-    # splashImage = "${theme}/background.png";
+    theme = inputs.honkai-railway-grub-theme.packages.x86_64-linux.march7th-thehunt_cn-grub-theme;
+    splashImage = "${theme}/background.png";
     memtest86.enable = true;
     efiInstallAsRemovable = true;
   };

@@ -64,10 +64,14 @@
           system = "x86_64-linux";
           modules = with inputs; [
             ./user/root
+            ./user/liet-v2
+            ./desktop-env/kde-plasma
+            # ./user/migg
             ./host/liet-desktop-kate
             ./platform/c7-amd
             ./platform/c7-amd/disk
             disko.nixosModules.disko
+            home-manager.nixosModules.home-manager
             flake-programs-sqlite.nixosModules.programs-sqlite
             # {
             #   system.configurationRevision = if (builtins.pathExists ./.git) then

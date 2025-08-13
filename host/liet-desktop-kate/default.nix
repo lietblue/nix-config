@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   lib,
   pkgs,
@@ -18,6 +19,9 @@
     "nix-command"
     "flakes"
   ];
+
+  programs.fish.enable = true;
+  users.defaultUserShell = pkgs.fish;
 
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
 
@@ -73,6 +77,12 @@
     };
     openFirewall = true;
   };
-
+  # networking.firewall.allowedTCPPorts = [ 
+  #   3000 
+  #   3001
+  #   3005
+  #   5200 
+  # ];
+  services.displayManager.ly.enable = true;
   system.stateVersion = "25.05";
 }
