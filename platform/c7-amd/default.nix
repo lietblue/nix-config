@@ -19,4 +19,19 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+
+  boot.loader.grub = rec {
+    device = "nodev";
+    efiSupport = true;
+    # theme = inputs.honkai-railway-grub-theme.packages.x86_64-linux.march7th-thehunt_cn-grub-theme;
+    # splashImage = "${theme}/background.png";
+    memtest86.enable = true;
+    efiInstallAsRemovable = true;
+  };
+  boot.initrd = {
+    compressor = "zstd";
+    compressorArgs = ["-19" "-T0"];
+    systemd.enable = true;
+  };
 }
