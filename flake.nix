@@ -60,6 +60,27 @@
             inherit inputs;
           }; 
         };
+        liet-desktop-kate = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./host/liet-desktop-kate
+            ./platform/c7-amd
+            ./platform/c7-amd/disk
+            disko.nixosModules.disko
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            # {
+            #   system.configurationRevision = if (builtins.pathExists ./.git) then
+            #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
+            #   else
+            #     null;
+            # }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
         liet-tablet-ap5 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";     
           modules = with inputs; [
