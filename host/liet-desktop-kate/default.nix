@@ -83,7 +83,7 @@
   #   3005
   #   5200 
   # ];
-  nvidia.acceptLicense = true;
+  
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "nvidia-x11"
     "nvidia-settings"
