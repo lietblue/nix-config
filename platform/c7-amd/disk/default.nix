@@ -40,8 +40,8 @@
                 format = "f2fs";
                 mountpoint = "/";
                 extraArgs = [
-                  "-i" # 2025-05 的部署中没有设置该项 应当 定期检查 inodes 状态
-                  # 哈气了 用 df -ih 检查
+                  "-i"
+                  # inode 数量有限制
                   # for more info check
                   # https://lore.kernel.org/all/CAF_dkJB%3d2PAqes+41xAi74Z3X0dSjQzCd9eMwDjpKmLD9PBq6A@mail.gmail.com/T/
                   "-O"
