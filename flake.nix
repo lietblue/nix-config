@@ -43,6 +43,7 @@
           system = "x86_64-linux";
           modules = with inputs; [
             ./user/root
+            ./user/dustella
             ./host/o2-cn-east-1
             ./platform/aliyun-swas
             ./platform/aliyun-swas/disk
