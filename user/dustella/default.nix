@@ -1,0 +1,11 @@
+users.users.dustella = {
+  isNormalUser = true;
+  description = "Dustella";
+  extraGroups = [
+    "wheel"
+  ];
+  openssh.authorizedKeys.keys = [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC93TJ1FpNpY6tTfJLP5KHJD8QLrQL88u6iuZwDEzsKL/MkzAAM/f4ab+MGwunVBHMXqt8PuT9SN91Bj1fADX6QjzwAxQjwFRVF1xvgjr2xpQlfFYOK599uUCalTqpbaghj48Fo0Uui8uLfX2K++obGA1NzN7Exbbip2cL6jlPbRe+Qk5+rsNRP9/Nl/njSkeHsBOsEooOIc9thwtdRbiNwrRo5ZAvX1XIR+dROrKJG04dbtBZECLjDFB9QRPk3WwRB0b8FPIduM836hsHjGFyrpB74PZmnfsQP448bXLP1TJdHzvx6YWZEbnLsXRJvFjRJBTZTFS3ScWle/DRmcRIHF86oiiY/3dKiqimCvp2C4M2z7NyLUMm6ojz4i0eY9IdUwbp0VUVBj/fODJRNickUX/sqSpswL+I+4Sud2911XlyqtzC8ulijz7/UI6PVOSg2MDl5m/231CyVbnGRlSIp0V8I93oyeaqhT05WtfylOt9c6X5Hv+og+A6b805UZyM="
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC6rozn4sbdk/TGVTHN4PkKcsgJyJsizrmJ4Y8nCZedZSuHglHfXjUXn+MS8kqvS25pAmnwYqigWuaU63HgCwm+Sl6HtBysXpUPN9jlPsx2eHvB7PEfCa09S2PhwMjdV+DvxEMkARnUaLpjUzc1VzVDh3ZqTcEmjA0FiL9K6fzBRar4HIeODx/Q2e5PuanFMiutpgAWl2nkcvqWvBroj09JUOR0zbT9LHUjK2D2jpAV4EK2cJs+E+NA9G6bxQHvbBZVhGH0oqiFuXC+9+Yz8PpkPV7I5ySqrXF/yhAMWBqQsg36nk7gthMot6hdPPgD6xK3sQFurRoO9cV/aFHdq4+FRppDad5aKaQ1tiZvLTqd3JHJ4Kpjo7ZuX53Lr4dY7DrgCDXerw37WW98cUqP3KjRdo4nreO4vo98NODTw0k1KMu5QIHmj9gPw2EP06c4gFUBWTGiO10aqVPlBhtQu2Y+B9eDG+GqNOOVFet+f9Zmpht5y2dnZ6H90wigLFAK/Sk="
+  ];
+};
