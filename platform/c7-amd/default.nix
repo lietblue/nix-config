@@ -23,8 +23,9 @@
     enable = true;
   };
   services.xserver.videoDrivers = ["nvidia"];
+  nixpkgs.config.nvidia.acceptLicense = true;
   hardware.nvidia = {
-    acceptLicense = true;
+    #acceptLicense = true;
     modesetting.enable = true;
     powerManagement.enable = false;
     powerManagement.finegrained = false;
