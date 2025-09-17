@@ -84,6 +84,7 @@
   environment.variables.EDITOR = "nano";
   networking.hostName = "o2-cn-east-1";
   boot.tmp.cleanOnBoot = true;
+  services.envfs.enable = true;
 
   services.openssh = {
     enable = true;

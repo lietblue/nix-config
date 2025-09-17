@@ -49,6 +49,7 @@
             ./platform/aliyun-swas/disk
             disko.nixosModules.disko
             flake-programs-sqlite.nixosModules.programs-sqlite
+            sops-nix.nixosModules.sops
             # {
             #   system.configurationRevision = if (builtins.pathExists ./.git) then
             #     builtins.readFile (builtins.fetchGit { url = ./.; rev = "HEAD"; } + "/.git/HEAD")
@@ -146,6 +147,7 @@
         o2-cn-east-1 = {
           imports = with inputs; [
             ./user/root
+            ./user/dustella
             ./host/o2-cn-east-1
             ./platform/aliyun-swas
             ./platform/aliyun-swas/disk

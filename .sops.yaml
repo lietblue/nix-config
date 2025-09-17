@@ -1,0 +1,9 @@
+keys:
+  - &liet_kate age1rdpzy9pluc3uvfp4kyuucca5q4rzzqfyc7c6xm7sxu556dapx30sdlh2lv
+  - &o2_cn_east_1 age19rrc9ktugw639qp7x9kdg89xn0m9jutqtxycz29202lfcyus75ksx66t4v
+creation_rules:
+  - path_regex: secrets/o2-cn-east-1/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+    - age:
+      - *liet_kate
+      - *o2_cn_east_1
