@@ -38,6 +38,18 @@
   outputs =
     { self, colmena, nixpkgs, ... }@inputs:
     {
+      lib = {
+        mkDiskConfig = (import ./disk) { inherit inputs; };
+        # Predefined disk configurations for common use cases
+        diskConfigs = {
+          default = (import ./disk) { inherit inputs; } {};
+          nvme = (import ./disk) { inherit inputs; } { device = "/dev/nvme0n1"; };
+          sata = (import ./disk) { inherit inputs; } { device = "/dev/sda"; };
+          withSwap = (import ./disk) { inherit inputs; } { swapSize = "16G"; };
+          ext4 = (import ./disk) { inherit inputs; } { rootFormat = "ext4"; };
+        };
+      };
+      
       nixosConfigurations = {
         o2-cn-east-1 = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
@@ -130,6 +142,72 @@
             #   else
             #     null;
             # }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
+        # Example host using modular disk configuration with custom values
+        example-host = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./user/liet-v2
+            ./desktop-env/kde-plasma
+            # Use elegant lib interface with custom configuration
+            (self.lib.mkDiskConfig {
+              device = "/dev/sda";
+              diskName = "example-disk";
+              espSize = "1G";
+              swapSize = "16G";
+              rootFormat = "ext4";
+            })
+            home-manager.nixosModules.home-manager
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            {
+              networking.hostName = "example-host";
+            }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
+        # Example host using predefined default disk configuration - most elegant!
+        default-disk-host = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./user/liet-v2
+            ./desktop-env/kde-plasma
+            # Use predefined default configuration - super clean!
+            self.lib.diskConfigs.default
+            home-manager.nixosModules.home-manager
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            {
+              networking.hostName = "default-disk-host";
+            }
+            { system.configurationRevision = self.rev or "dirty"; }
+          ];
+          specialArgs = {
+            inherit inputs;
+          }; 
+        };
+        # Example host using predefined SATA disk configuration
+        sata-disk-host = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = with inputs; [
+            ./user/root
+            ./user/liet-v2
+            ./desktop-env/kde-plasma
+            # Use predefined SATA configuration
+            self.lib.diskConfigs.sata
+            home-manager.nixosModules.home-manager
+            flake-programs-sqlite.nixosModules.programs-sqlite
+            {
+              networking.hostName = "sata-disk-host";
+            }
             { system.configurationRevision = self.rev or "dirty"; }
           ];
           specialArgs = {

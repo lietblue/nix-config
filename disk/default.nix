@@ -1,0 +1,90 @@
+{ inputs }:
+
+{
+  device ? "/dev/nvme0n1",
+  diskName ? "main", 
+  espSize ? "512M",
+  swapSize ? null,
+  rootFormat ? "f2fs"
+}:
+
+{ lib, config, ... }:
+
+with lib;
+
+{
+  imports = [
+    inputs.disko.nixosModules.disko
+  ];
+
+  config = {
+    disko.devices = {
+      disk = {
+        ${diskName} = {
+          device = device;
+          type = "disk";
+          content = {
+            type = "gpt";
+            partitions = {
+              boot = {
+                priority = 0;
+                size = "1M";
+                type = "EF02";
+              };
+              ESP = {
+                priority = 1;
+                size = espSize;
+                type = "EF00";
+                content = {
+                  type = "filesystem";
+                  format = "vfat";
+                  mountpoint = "/boot";
+                  mountOptions = [ "umask=0077" ];
+                };
+              };
+            } // (optionalAttrs (swapSize != null) {
+              plainSwap = {
+                priority = 2;
+                size = swapSize;
+                content = {
+                  type = "swap";
+                  discardPolicy = "both";
+                };
+              };
+            }) // {
+              root = {
+                priority = if swapSize != null then 3 else 2;
+                name = "root";
+                size = "100%";
+                content = {
+                  type = "filesystem";
+                  format = rootFormat;
+                  mountpoint = "/";
+                } // (if rootFormat == "f2fs" then {
+                  extraArgs = [
+                    "-i"
+                    # inode 数量有限制
+                    # for more info check
+                    # https://lore.kernel.org/all/CAF_dkJB%3d2PAqes+41xAi74Z3X0dSjQzCd9eMwDjpKmLD9PBq6A@mail.gmail.com/T/
+                    "-O"
+                    "extra_attr,inode_checksum,sb_checksum,compression,encrypt"
+                  ];
+                  mountOptions = [
+                    # 计算机性能不够 没必要为了空间去开 ztsd什么的高速低压缩率的lz4已经很符合我目标了
+                    # 可以逝世 inline_data inline_dentry 什么的 因为nix大量依赖软连接
+                    # 看起来这样会让nix的软连接直接住进 inodes 里 可以跑过港媒 查过了不能跑过港媒但是可以减少占用
+                    # inline_xattr 是让文件尾部的东西进 inode 先不开了感觉没啥用
+                    "inline_data,inline_dentry,compress_algorithm=lz4,compress_chksum,atgc,gc_merge,lazytime"
+                  ];
+                } else {
+                  # ext4 default options
+                  mountOptions = [ "defaults" ];
+                });
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}
